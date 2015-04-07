@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_festaxian" default="compile.module.festaxian">
+  <dirname property="module.festaxian.basedir" file="${ant.file.module_festaxian}"/>
+  
+  <property name="module.jdk.home.festaxian" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.festaxian" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.festaxian" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.festaxian" value="-encoding UTF-8 -source 1.6 ${compiler.args}"/>
+  
+  <property name="festaxian.output.dir" value="${module.festaxian.basedir}/out/production/Festaxian"/>
+  <property name="festaxian.testoutput.dir" value="${module.festaxian.basedir}/out/test/Festaxian"/>
+  
+  <path id="festaxian.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="festaxian.module.production.classpath">
+    <path refid="${module.jdk.classpath.festaxian}"/>
+  </path>
+  
+  <path id="festaxian.runtime.production.module.classpath">
+    <pathelement location="${festaxian.output.dir}"/>
+  </path>
+  
+  <path id="festaxian.module.classpath">
+    <path refid="${module.jdk.classpath.festaxian}"/>
+    <pathelement location="${festaxian.output.dir}"/>
+  </path>
+  
+  <path id="festaxian.runtime.module.classpath">
+    <pathelement location="${festaxian.testoutput.dir}"/>
+    <pathelement location="${festaxian.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.festaxian">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.festaxian">
+    <patternset refid="excluded.from.module.festaxian"/>
+  </patternset>
+  
+  <path id="festaxian.module.sourcepath">
+    <dirset dir="${module.festaxian.basedir}">
+      <include name="src"/>
+      <include name="gen"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.festaxian" depends="compile.module.festaxian.production,compile.module.festaxian.tests" description="Compile module Festaxian"/>
+  
+  <target name="compile.module.festaxian.production" depends="register.custom.compilers" description="Compile module Festaxian; production classes">
+    <mkdir dir="${festaxian.output.dir}"/>
+    <javac2 destdir="${festaxian.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.festaxian}/javac">
+      <compilerarg line="${compiler.args.festaxian}"/>
+      <bootclasspath refid="festaxian.module.bootclasspath"/>
+      <classpath refid="festaxian.module.production.classpath"/>
+      <src refid="festaxian.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.festaxian"/>
+    </javac2>
+    
+    <copy todir="${festaxian.output.dir}">
+      <fileset dir="${module.festaxian.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.festaxian.basedir}/gen">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.festaxian.tests" depends="register.custom.compilers,compile.module.festaxian.production" description="compile module Festaxian; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.festaxian" description="cleanup module">
+    <delete dir="${festaxian.output.dir}"/>
+    <delete dir="${festaxian.testoutput.dir}"/>
+  </target>
+</project>
